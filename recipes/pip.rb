@@ -39,7 +39,7 @@ end
 # https://bitbucket.org/ianb/pip/issue/104/pip-uninstall-on-ubuntu-linux
 remote_file "#{Chef::Config[:file_cache_path]}/distribute_setup.py" do
   source node['python']['distribute_script_url']
-  mode "0644"
+  mode 0644
   not_if { ::File.exists?(pip_binary) }
 end
 

@@ -31,7 +31,8 @@ end
 # refactoring into core chef easy
 
 action :install do
-  # If we specified a version, and it's not the current version, move to the specified version
+  # If we specified a version, and it's not the current version,
+  # move to the specified version
   if new_resource.version != nil && new_resource.version != current_resource.version
     install_version = new_resource.version
   # If it's not installed at all, install it
@@ -159,7 +160,12 @@ end
 # this allows PythonPip to work with Chef::Resource::Package
 def which_pip(nr)
   if (nr.respond_to?("virtualenv") && nr.virtualenv)
-    ::File.join(nr.virtualenv,'/bin/pip')
+    if nr.virtualenv.include?('/')
+      full_virtualenv = nr.virtualenv
+    else
+      full_virtualenv = "#{node['python']['virtualenv']['path']}/#{nr.virtualenv}"
+    end
+    ::File.join(full_virtualenv,'/bin/pip')
   elsif node['python']['install_method'].eql?("source")
     ::File.join(node['python']['prefix_dir'], "/bin/pip")
   else

@@ -27,8 +27,12 @@ def initialize(*args)
   @action = :create
 end
 
-attribute :path, :kind_of => String, :name_attribute => true
-attribute :interpreter, :default => 'python'
-attribute :owner, :regex => Chef::Config[:user_valid_regex]
-attribute :group, :regex => Chef::Config[:group_valid_regex]
+
+attribute :group, :default => nil, :regex => Chef::Config[:group_valid_regex]
+attribute :interpreter, :default => node['python']['virtualenv']['options']['python']
+attribute :name, :kind_of => String, :name_attribute => true
+attribute :owner, :default => nil, :regex => Chef::Config[:user_valid_regex]
 attribute :options, :kind_of => String
+attribute :path, :default => node['python']['virtualenv']['path'], :kind_of => String
+attribute :prefix, :default => node['python']['virtualenv']['options']['prefix'], :kind_of => String
+attribute :prompt, :default => node['python']['virtualenv']['options']['prompt']

@@ -18,8 +18,34 @@
 # limitations under the License.
 #
 
-include_recipe "python::pip"
+include_recipe 'python::pip'
 
-python_pip "virtualenv" do
+python_pip 'virtualenv' do
   action :install
+  version node['python']['virtualenv']['version']
+end
+
+
+# Create the virtualenv home.
+directory node['python']['virtualenv']['path'] do
+  action :create
+  group node['python']['virtualenv']['permissions']['group']
+  mode node['python']['virtualenv']['permissions']['mode']
+  owner node['python']['virtualenv']['permissions']['owner']
+end
+
+
+# Create the virtualenv environment variable file.
+# This file will need to be explicitly sourced by Chef whenever
+#   virtualenvs must be used, since the lack of a login shell means
+#   that it won't be done automatically.
+# This functionality is handled for bash using the `python_bash` provider,
+#   which accepts a `virtualenv` attribute, and for `python_pip`, which also
+#   accepts a `virtualenv` attribute.
+template "#{node['python']['virtualenv']['wrapper']['profile']}" do
+  action :create
+  group 'root'
+  mode 0755
+  owner 'root'
+  source 'virtualenv.sh'
 end
